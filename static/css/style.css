@@ -1,0 +1,72 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 20px;
+    color: white;
+    z-index: 1000;
+}
+.sidebar a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #d1d1d1;
+    display: block;
+    transition: 0.3s;
+}
+.sidebar a:hover, .sidebar a.active {
+    color: #fff;
+    background-color: #495057;
+    border-left: 4px solid #0d6efd;
+}
+.sidebar .brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+}
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    min-height: 100vh;
+}
+.navbar {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+}
+.stat-card {
+    border-left: 4px solid #0d6efd;
+}
+.stat-card.warning {
+    border-left-color: #ffc107;
+}
+.stat-card.success {
+    border-left-color: #198754;
+}
+.stat-card.danger {
+    border-left-color: #dc3545;
+}
+.stat-icon {
+    font-size: 2rem;
+    opacity: 0.3;
+}

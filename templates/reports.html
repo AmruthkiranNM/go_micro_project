@@ -1,0 +1,61 @@
+{{ define "reports.html" }}
+{{ template "layout.html" . }}
+{{ end }}
+
+{{ define "content" }}
+<div class="d-flex justify-content-between mb-3">
+    <p class="h4">Reports</p>
+    <button class="btn btn-secondary"><i class="fas fa-download"></i> Export PDF</button>
+</div>
+
+<div class="row">
+    <!-- Revenue Card -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100 border-left-primary">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Revenue</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$120,000</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300 stat-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Card -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100 border-left-danger">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Expenses</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$45,000</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-money-bill-wave fa-2x text-gray-300 stat-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Monthly Sales Overview</h6>
+    </div>
+    <div class="card-body">
+        <div style="height: 400px;">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+<script src="/static/js/script.js"></script>
+{{ end }}
