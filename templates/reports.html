@@ -11,7 +11,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Revenue</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">${{ printf "%.2f" .totalRevenue }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ .formattedRevenue }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -41,7 +41,7 @@
                     <tr>
                         <td>{{ .Name }}</td>
                         <td>{{ .TotalQuantity }}</td>
-                        <td>${{ printf "%.2f" .TotalRevenue }}</td>
+                        <td>{{ .FormattedRev }}</td>
                     </tr>
                     {{ else }}
                     <tr>
@@ -76,7 +76,7 @@
                         <td>{{ .ID }}</td>
                         <td>{{ .ProductName }}</td>
                         <td>{{ .Quantity }}</td>
-                        <td>${{ printf "%.2f" .Total }}</td>
+                        <td>{{ .FormattedTotal }}</td>
                         <td>{{ .Date }}</td>
                     </tr>
                     {{ end }}

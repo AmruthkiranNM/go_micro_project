@@ -25,6 +25,7 @@ func ListProducts(c *gin.Context) {
 			continue
 		}
 		p.CalculateStatus()
+		p.FormattedPrice = models.FormatIndianRupees(p.Price)
 		products = append(products, p)
 	}
 

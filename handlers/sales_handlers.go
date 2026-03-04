@@ -31,6 +31,7 @@ func ListSales(c *gin.Context) {
 		if err := rows.Scan(&s.ID, &s.ProductName, &s.Quantity, &s.Total, &s.Date); err != nil {
 			continue
 		}
+		s.FormattedTotal = models.FormatIndianRupees(s.Total)
 		sales = append(sales, s)
 	}
 
@@ -115,17 +116,39 @@ func RecordSale(c *gin.Context) {
 }
 
 func Dashboard(c *gin.Context) {
-	var productCount, salesCount int
+	var productCount, salesCount, lowStockCount int
 	var totalRevenue float64
 
 	database.DB.QueryRow("SELECT COUNT(*) FROM products").Scan(&productCount)
 	database.DB.QueryRow("SELECT COUNT(*) FROM sales").Scan(&salesCount)
 	database.DB.QueryRow("SELECT COALESCE(SUM(total), 0) FROM sales").Scan(&totalRevenue)
+	database.DB.QueryRow("SELECT COUNT(*) FROM products WHERE quantity <= 10").Scan(&lowStockCount)
+
+	// Fetch Recent 5 Sales
+	recentRows, _ := database.DB.Query(`
+		SELECT s.id, p.name, s.quantity, s.total, s.date 
+		FROM sales s 
+		JOIN products p ON s.product_id = p.id
+		ORDER BY s.date DESC LIMIT 5
+	`)
+	var recentSales []models.Sale
+	if recentRows != nil {
+		defer recentRows.Close()
+		for recentRows.Next() {
+			var s models.Sale
+			if err := recentRows.Scan(&s.ID, &s.ProductName, &s.Quantity, &s.Total, &s.Date); err == nil {
+				s.FormattedTotal = models.FormatIndianRupees(s.Total)
+				recentSales = append(recentSales, s)
+			}
+		}
+	}
 
 	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"title":        "Dashboard",
-		"productCount": productCount,
-		"salesCount":   salesCount,
-		"totalRevenue": totalRevenue,
+		"title":            "Dashboard",
+		"productCount":     productCount,
+		"salesCount":       salesCount,
+		"formattedRevenue": models.FormatIndianRupees(totalRevenue),
+		"lowStockCount":    lowStockCount,
+		"recentSales":      recentSales,
 	})
 }

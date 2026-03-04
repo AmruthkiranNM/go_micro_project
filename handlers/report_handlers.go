@@ -26,6 +26,7 @@ func ShowReports(c *gin.Context) {
 		Name          string
 		TotalQuantity int
 		TotalRevenue  float64
+		FormattedRev  string
 	}
 
 	var summaries []ProductSummary
@@ -34,6 +35,7 @@ func ShowReports(c *gin.Context) {
 		for rows.Next() {
 			var ps ProductSummary
 			if err := rows.Scan(&ps.Name, &ps.TotalQuantity, &ps.TotalRevenue); err == nil {
+				ps.FormattedRev = models.FormatIndianRupees(ps.TotalRevenue)
 				summaries = append(summaries, ps)
 			}
 		}
@@ -52,15 +54,16 @@ func ShowReports(c *gin.Context) {
 		for historyRows.Next() {
 			var s models.Sale
 			if err := historyRows.Scan(&s.ID, &s.ProductName, &s.Quantity, &s.Total, &s.Date); err == nil {
+				s.FormattedTotal = models.FormatIndianRupees(s.Total)
 				history = append(history, s)
 			}
 		}
 	}
 
 	c.HTML(http.StatusOK, "reports.html", gin.H{
-		"title":        "Reports",
-		"totalRevenue": totalRevenue,
-		"summaries":    summaries,
-		"history":      history,
+		"title":            "Reports",
+		"formattedRevenue": models.FormatIndianRupees(totalRevenue),
+		"summaries":        summaries,
+		"history":          history,
 	})
 }
