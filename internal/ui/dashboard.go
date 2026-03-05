@@ -40,12 +40,15 @@ func makeDashboard() fyne.CanvasObject {
 		rows = [][]string{{"—", "No recent sales", "—", "—", "—"}}
 	}
 
-	tbl := MakeTable(headers, rows)
+	tbl := MakeTable(headers, &rows)
 	tbl.SetColumnWidth(0, 50)
 	tbl.SetColumnWidth(1, 200)
 	tbl.SetColumnWidth(2, 60)
 	tbl.SetColumnWidth(3, 120)
 	tbl.SetColumnWidth(4, 180)
+
+	scrollTbl := container.NewScroll(tbl)
+	scrollTbl.SetMinSize(fyne.NewSize(700, 200))
 
 	refreshBtn := widget.NewButton("🔄 Refresh", func() {})
 
@@ -57,7 +60,7 @@ func makeDashboard() fyne.CanvasObject {
 		nil, nil, nil,
 		container.NewVBox(
 			recentTitle,
-			container.NewMax(tbl),
+			scrollTbl,
 			refreshBtn,
 		),
 	)

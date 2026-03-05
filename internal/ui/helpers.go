@@ -53,15 +53,15 @@ func MakeErrorLabel() *widget.Label {
 	return lbl
 }
 
-// MakeTable creates a simple table from headers and rows of strings.
-// rows is a [][]string.
-func MakeTable(headers []string, rows [][]string) *widget.Table {
+// MakeTable creates a simple table from headers and a pointer to rows of strings.
+// rows is a *[][]string so it can be updated dynamically and refreshed.
+func MakeTable(headers []string, rows *[][]string) *widget.Table {
 	t := widget.NewTable(
 		func() (int, int) {
-			if len(rows) == 0 {
+			if rows == nil || len(*rows) == 0 {
 				return 1, len(headers)
 			}
-			return len(rows) + 1, len(headers)
+			return len(*rows) + 1, len(headers)
 		},
 		func() fyne.CanvasObject {
 			return widget.NewLabel("                              ")
@@ -73,8 +73,8 @@ func MakeTable(headers []string, rows [][]string) *widget.Table {
 				lbl.SetText(headers[id.Col])
 			} else {
 				lbl.TextStyle = fyne.TextStyle{}
-				if id.Row-1 < len(rows) && id.Col < len(rows[id.Row-1]) {
-					lbl.SetText(rows[id.Row-1][id.Col])
+				if rows != nil && id.Row-1 < len(*rows) && id.Col < len((*rows)[id.Row-1]) {
+					lbl.SetText((*rows)[id.Row-1][id.Col])
 				} else {
 					lbl.SetText("")
 				}

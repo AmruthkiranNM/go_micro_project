@@ -17,12 +17,16 @@ func makeSales() fyne.CanvasObject {
 
 	headers := []string{"#", "Product", "Qty", "Total", "Date"}
 
-	tbl := MakeTable(headers, nil)
+	var rows [][]string
+	tbl := MakeTable(headers, &rows)
 	tbl.SetColumnWidth(0, 50)
 	tbl.SetColumnWidth(1, 200)
 	tbl.SetColumnWidth(2, 70)
 	tbl.SetColumnWidth(3, 130)
 	tbl.SetColumnWidth(4, 200)
+
+	scrollTbl := container.NewScroll(tbl)
+	scrollTbl.SetMinSize(fyne.NewSize(700, 400))
 
 	statusLabel := widget.NewLabel("Loading…")
 
@@ -35,7 +39,7 @@ func makeSales() fyne.CanvasObject {
 		}
 		products, _ = services.ListProductsInStock()
 
-		var rows [][]string
+		rows = nil // clear first
 		for _, s := range sales {
 			rows = append(rows, []string{
 				IntToStr(s.ID),
@@ -49,13 +53,6 @@ func makeSales() fyne.CanvasObject {
 			rows = [][]string{{"—", "No sales recorded yet", "—", "—", "—"}}
 		}
 
-		newTbl := MakeTable(headers, rows)
-		newTbl.SetColumnWidth(0, 50)
-		newTbl.SetColumnWidth(1, 200)
-		newTbl.SetColumnWidth(2, 70)
-		newTbl.SetColumnWidth(3, 130)
-		newTbl.SetColumnWidth(4, 200)
-		*tbl = *newTbl
 		tbl.Refresh()
 		statusLabel.SetText(fmt.Sprintf("%d sales", len(sales)))
 	}
@@ -135,6 +132,6 @@ func makeSales() fyne.CanvasObject {
 	return container.NewBorder(
 		container.NewVBox(MakeSectionTitle("🛒 Sales Management"), widget.NewSeparator(), toolbar),
 		nil, nil, nil,
-		tbl,
+		scrollTbl,
 	)
 }

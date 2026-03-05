@@ -32,13 +32,17 @@ func makeProducts() fyne.CanvasObject {
 		return rows
 	}
 
-	tbl := MakeTable(headers, nil)
+	var rows [][]string
+	tbl := MakeTable(headers, &rows)
 	tbl.SetColumnWidth(0, 50)
 	tbl.SetColumnWidth(1, 200)
 	tbl.SetColumnWidth(2, 150)
 	tbl.SetColumnWidth(3, 120)
 	tbl.SetColumnWidth(4, 70)
 	tbl.SetColumnWidth(5, 120)
+
+	scrollTbl := container.NewScroll(tbl)
+	scrollTbl.SetMinSize(fyne.NewSize(700, 400))
 
 	statusLabel := widget.NewLabel("Loading products…")
 
@@ -50,18 +54,10 @@ func makeProducts() fyne.CanvasObject {
 			statusLabel.SetText("❌ " + err.Error())
 			return
 		}
-		rows := buildRows()
+		rows = buildRows()
 		if len(rows) == 0 {
 			rows = [][]string{{"—", "No products found", "—", "—", "—", "—"}}
 		}
-		newTbl := MakeTable(headers, rows)
-		newTbl.SetColumnWidth(0, 50)
-		newTbl.SetColumnWidth(1, 200)
-		newTbl.SetColumnWidth(2, 150)
-		newTbl.SetColumnWidth(3, 120)
-		newTbl.SetColumnWidth(4, 70)
-		newTbl.SetColumnWidth(5, 120)
-		*tbl = *newTbl
 		tbl.Refresh()
 		statusLabel.SetText(fmt.Sprintf("%d products", len(products)))
 	}
@@ -213,7 +209,7 @@ func makeProducts() fyne.CanvasObject {
 	screenContent := container.NewBorder(
 		container.NewVBox(MakeSectionTitle("📦 Product Management"), widget.NewSeparator(), toolbar),
 		nil, nil, nil,
-		tbl,
+		scrollTbl,
 	)
 
 	// Attach window reference when the object is shown

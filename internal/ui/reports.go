@@ -11,16 +11,17 @@ import (
 func makeReports() fyne.CanvasObject {
 	statusLabel := widget.NewLabel("")
 
-	// Summary table
+	var sumRows [][]string
 	summaryHeaders := []string{"Product", "Units Sold", "Revenue"}
-	summaryTbl := MakeTable(summaryHeaders, nil)
+	summaryTbl := MakeTable(summaryHeaders, &sumRows)
 	summaryTbl.SetColumnWidth(0, 250)
 	summaryTbl.SetColumnWidth(1, 100)
 	summaryTbl.SetColumnWidth(2, 150)
 
 	// History table
+	var histRows [][]string
 	historyHeaders := []string{"#", "Product", "Qty", "Total", "Date"}
-	historyTbl := MakeTable(historyHeaders, nil)
+	historyTbl := MakeTable(historyHeaders, &histRows)
 	historyTbl.SetColumnWidth(0, 50)
 	historyTbl.SetColumnWidth(1, 200)
 	historyTbl.SetColumnWidth(2, 70)
@@ -28,6 +29,9 @@ func makeReports() fyne.CanvasObject {
 	historyTbl.SetColumnWidth(4, 200)
 
 	revCard := makeLabelCard("💰 Total Revenue", "—")
+
+	scrollSumTbl := container.NewScroll(summaryTbl)
+	scrollHistTbl := container.NewScroll(historyTbl)
 
 	refresh := func() {
 		rd, err := services.GetReports()
@@ -42,22 +46,17 @@ func makeReports() fyne.CanvasObject {
 		revCard.Refresh()
 
 		// Rebuild summary table
-		var sumRows [][]string
+		sumRows = nil
 		for _, ps := range rd.ProductSummaries {
 			sumRows = append(sumRows, []string{ps.Name, IntToStr(ps.TotalQuantity), ps.FormattedRev})
 		}
 		if len(sumRows) == 0 {
 			sumRows = [][]string{{"No data", "—", "—"}}
 		}
-		newSumTbl := MakeTable(summaryHeaders, sumRows)
-		newSumTbl.SetColumnWidth(0, 250)
-		newSumTbl.SetColumnWidth(1, 100)
-		newSumTbl.SetColumnWidth(2, 150)
-		*summaryTbl = *newSumTbl
 		summaryTbl.Refresh()
 
 		// Rebuild history table
-		var histRows [][]string
+		histRows = nil
 		for _, s := range rd.RecentSalesHistory {
 			histRows = append(histRows, []string{
 				IntToStr(s.ID), s.ProductName, IntToStr(s.Quantity), s.FormattedTotal, s.Date,
@@ -66,13 +65,6 @@ func makeReports() fyne.CanvasObject {
 		if len(histRows) == 0 {
 			histRows = [][]string{{"—", "No sales history", "—", "—", "—"}}
 		}
-		newHistTbl := MakeTable(historyHeaders, histRows)
-		newHistTbl.SetColumnWidth(0, 50)
-		newHistTbl.SetColumnWidth(1, 200)
-		newHistTbl.SetColumnWidth(2, 70)
-		newHistTbl.SetColumnWidth(3, 130)
-		newHistTbl.SetColumnWidth(4, 200)
-		*historyTbl = *newHistTbl
 		historyTbl.Refresh()
 
 		statusLabel.SetText("")
@@ -92,8 +84,8 @@ func makeReports() fyne.CanvasObject {
 		),
 		nil, nil, nil,
 		container.NewVSplit(
-			summaryTbl,
-			container.NewVBox(MakeSectionTitle("Recent Sales History (Last 10)"), historyTbl),
+			scrollSumTbl,
+			container.NewVBox(MakeSectionTitle("Recent Sales History (Last 10)"), scrollHistTbl),
 		),
 	)
 }
