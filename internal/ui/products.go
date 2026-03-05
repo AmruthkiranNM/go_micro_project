@@ -179,25 +179,32 @@ func makeProducts() fyne.CanvasObject {
 		)
 	}
 
-	// Need window reference — use a late-bind approach via button callbacks
-	var winRef fyne.Window
+	getWin := func() fyne.Window {
+		if a := fyne.CurrentApp(); a != nil {
+			wins := a.Driver().AllWindows()
+			if len(wins) > 0 {
+				return wins[0]
+			}
+		}
+		return nil
+	}
 
 	addBtn := widget.NewButton("➕ Add Product", func() {
-		if winRef != nil {
-			showAddDialog(winRef)
+		if w := getWin(); w != nil {
+			showAddDialog(w)
 		}
 	})
 	addBtn.Importance = widget.HighImportance
 
 	editBtn := widget.NewButton("✏️ Edit Selected", func() {
-		if winRef != nil {
-			showEditDialog(winRef)
+		if w := getWin(); w != nil {
+			showEditDialog(w)
 		}
 	})
 
 	deleteBtn := widget.NewButton("🗑️ Delete Selected", func() {
-		if winRef != nil {
-			showDeleteConfirm(winRef)
+		if w := getWin(); w != nil {
+			showDeleteConfirm(w)
 		}
 	})
 	deleteBtn.Importance = widget.DangerImportance
@@ -206,25 +213,14 @@ func makeProducts() fyne.CanvasObject {
 
 	toolbar := container.NewHBox(addBtn, editBtn, deleteBtn, refreshBtn, statusLabel)
 
-	// Capture window via Canvas hook
 	screenContent := container.NewBorder(
 		container.NewVBox(MakeSectionTitle("📦 Product Management"), widget.NewSeparator(), toolbar),
 		nil, nil, nil,
 		scrollTbl,
 	)
 
-	// Attach window reference when the object is shown
-	// We use a lifecycle trick: wrap in container and set winRef from app state.
-	// Since we have no direct win reference here, we resolve via fyne.CurrentApp().
-	go func() {
-		if a := fyne.CurrentApp(); a != nil {
-			windows := a.Driver().AllWindows()
-			if len(windows) > 0 {
-				winRef = windows[0]
-			}
-		}
-		refreshTable()
-	}()
+	// Sync refresh load
+	refreshTable()
 
 	return screenContent
 }

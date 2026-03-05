@@ -108,30 +108,32 @@ func makeSales() fyne.CanvasObject {
 		dlg.Show()
 	}
 
-	var winRef fyne.Window
-	recordBtn := widget.NewButton("➕ Record Sale", func() {
-		if winRef != nil {
-			showRecordSaleDialog(winRef)
+	getWin := func() fyne.Window {
+		if a := fyne.CurrentApp(); a != nil {
+			wins := a.Driver().AllWindows()
+			if len(wins) > 0 {
+				return wins[0]
+			}
+		}
+		return nil
+	}
+
+	addBtn := widget.NewButton("🛒 Record Sale", func() {
+		if w := getWin(); w != nil {
+			showRecordSaleDialog(w)
 		}
 	})
-	recordBtn.Importance = widget.HighImportance
+	addBtn.Importance = widget.HighImportance
 
 	refreshBtn := widget.NewButton("🔄 Refresh", func() { refreshTable() })
 
-	toolbar := container.NewHBox(recordBtn, refreshBtn, statusLabel)
+	toolbar := container.NewHBox(addBtn, refreshBtn, statusLabel)
 
-	go func() {
-		if a := fyne.CurrentApp(); a != nil {
-			windows := a.Driver().AllWindows()
-			if len(windows) > 0 {
-				winRef = windows[0]
-			}
-		}
-		refreshTable()
-	}()
+	// Refresh UI load synchronously
+	refreshTable()
 
 	return container.NewBorder(
-		container.NewVBox(MakeSectionTitle("🛒 Sales Management"), widget.NewSeparator(), toolbar),
+		container.NewVBox(MakeSectionTitle("📈 Sales Tracking"), widget.NewSeparator(), toolbar),
 		nil, nil, nil,
 		scrollTbl,
 	)

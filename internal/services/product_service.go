@@ -1,8 +1,10 @@
 package services
 
 import (
+	"fmt"
 	"inventory-system/database"
 	"inventory-system/models"
+	"strings"
 )
 
 // ListProducts returns all products from the database.
@@ -72,5 +74,11 @@ func UpdateProduct(id int, p models.Product) error {
 // DeleteProduct removes a product; returns error if it has sales records.
 func DeleteProduct(id int) error {
 	_, err := database.DB.Exec("DELETE FROM products WHERE id = ?", id)
-	return err
+	if err != nil {
+		if strings.Contains(err.Error(), "FOREIGN KEY constraint failed") {
+			return fmt.Errorf("product cannot be deleted because it has recorded sales history. Try setting its quantity to 0 instead")
+		}
+		return err
+	}
+	return nil
 }

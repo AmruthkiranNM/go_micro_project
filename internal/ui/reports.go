@@ -74,7 +74,7 @@ func makeReports() fyne.CanvasObject {
 
 	refreshBtn := widget.NewButton("🔄 Refresh", refresh)
 
-	go refresh()
+	refresh()
 
 	return container.NewBorder(
 		container.NewVBox(

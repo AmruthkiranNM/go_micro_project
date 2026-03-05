@@ -34,7 +34,16 @@ func makeProfile(state *AppState) fyne.CanvasObject {
 	saveBtn := widget.NewButton("💾 Save Changes", nil)
 	saveBtn.Importance = widget.HighImportance
 
-	var winRef fyne.Window
+	getWin := func() fyne.Window {
+		if a := fyne.CurrentApp(); a != nil {
+			wins := a.Driver().AllWindows()
+			if len(wins) > 0 {
+				return wins[0]
+			}
+		}
+		return nil
+	}
+
 	saveBtn.OnTapped = func() {
 		err := services.UpdateProfile(
 			state.CurrentUser.ID,
@@ -51,19 +60,10 @@ func makeProfile(state *AppState) fyne.CanvasObject {
 		state.CurrentUser.Email = emailEntry.Text
 		passwordEntry.SetText("")
 		statusLabel.SetText("✅ Profile updated successfully!")
-		if winRef != nil {
-			dialog.ShowInformation("Success", "Profile updated successfully!", winRef)
+		if w := getWin(); w != nil {
+			dialog.ShowInformation("Success", "Profile updated successfully!", w)
 		}
 	}
-
-	go func() {
-		if a := fyne.CurrentApp(); a != nil {
-			windows := a.Driver().AllWindows()
-			if len(windows) > 0 {
-				winRef = windows[0]
-			}
-		}
-	}()
 
 	form := widget.NewForm(
 		widget.NewFormItem("Username", usernameEntry),
