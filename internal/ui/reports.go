@@ -28,7 +28,7 @@ func makeReports() fyne.CanvasObject {
 	historyTbl.SetColumnWidth(3, 130)
 	historyTbl.SetColumnWidth(4, 200)
 
-	revCard := makeLabelCard("💰 Total Revenue", "—")
+	revCard := container.NewMax(makeLabelCard("💰 Total Revenue", "—"))
 
 	scrollSumTbl := container.NewScroll(summaryTbl)
 	scrollHistTbl := container.NewScroll(historyTbl)
@@ -42,29 +42,31 @@ func makeReports() fyne.CanvasObject {
 
 		// Rebuild revenue card
 		newCard := makeLabelCard("💰 Total Revenue", rd.FormattedRevenue)
-		*revCard.(*widget.Card) = *newCard.(*widget.Card)
+		revCard.Objects = []fyne.CanvasObject{newCard}
 		revCard.Refresh()
 
 		// Rebuild summary table
-		sumRows = nil
+		var newSumRows [][]string
 		for _, ps := range rd.ProductSummaries {
-			sumRows = append(sumRows, []string{ps.Name, IntToStr(ps.TotalQuantity), ps.FormattedRev})
+			newSumRows = append(newSumRows, []string{ps.Name, IntToStr(ps.TotalQuantity), ps.FormattedRev})
 		}
-		if len(sumRows) == 0 {
-			sumRows = [][]string{{"No data", "—", "—"}}
+		if len(newSumRows) == 0 {
+			newSumRows = [][]string{{"No data", "—", "—"}}
 		}
+		sumRows = newSumRows
 		summaryTbl.Refresh()
 
 		// Rebuild history table
-		histRows = nil
+		var newHistRows [][]string
 		for _, s := range rd.RecentSalesHistory {
-			histRows = append(histRows, []string{
+			newHistRows = append(newHistRows, []string{
 				IntToStr(s.ID), s.ProductName, IntToStr(s.Quantity), s.FormattedTotal, s.Date,
 			})
 		}
-		if len(histRows) == 0 {
-			histRows = [][]string{{"—", "No sales history", "—", "—", "—"}}
+		if len(newHistRows) == 0 {
+			newHistRows = [][]string{{"—", "No sales history", "—", "—", "—"}}
 		}
+		histRows = newHistRows
 		historyTbl.Refresh()
 
 		statusLabel.SetText("")

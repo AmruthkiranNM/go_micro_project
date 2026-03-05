@@ -54,10 +54,11 @@ func makeProducts() fyne.CanvasObject {
 			statusLabel.SetText("❌ " + err.Error())
 			return
 		}
-		rows = buildRows()
-		if len(rows) == 0 {
-			rows = [][]string{{"—", "No products found", "—", "—", "—", "—"}}
+		newRows := buildRows()
+		if len(newRows) == 0 {
+			newRows = [][]string{{"—", "No products found", "—", "—", "—", "—"}}
 		}
+		rows = newRows
 		tbl.Refresh()
 		statusLabel.SetText(fmt.Sprintf("%d products", len(products)))
 	}

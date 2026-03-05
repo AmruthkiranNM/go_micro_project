@@ -39,9 +39,9 @@ func makeSales() fyne.CanvasObject {
 		}
 		products, _ = services.ListProductsInStock()
 
-		rows = nil // clear first
+		var newRows [][]string
 		for _, s := range sales {
-			rows = append(rows, []string{
+			newRows = append(newRows, []string{
 				IntToStr(s.ID),
 				s.ProductName,
 				IntToStr(s.Quantity),
@@ -49,10 +49,11 @@ func makeSales() fyne.CanvasObject {
 				s.Date,
 			})
 		}
-		if len(rows) == 0 {
-			rows = [][]string{{"—", "No sales recorded yet", "—", "—", "—"}}
+		if len(newRows) == 0 {
+			newRows = [][]string{{"—", "No sales recorded yet", "—", "—", "—"}}
 		}
 
+		rows = newRows
 		tbl.Refresh()
 		statusLabel.SetText(fmt.Sprintf("%d sales", len(sales)))
 	}

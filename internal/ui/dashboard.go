@@ -27,8 +27,11 @@ func makeDashboard() fyne.CanvasObject {
 	// ---- Recent Sales Table ----
 	headers := []string{"#", "Product", "Qty", "Total", "Date"}
 	var rows [][]string
+
+	// Create local slice first (even though this runs synchronously, keeping consistency)
+	var newRows [][]string
 	for _, s := range stats.RecentSales {
-		rows = append(rows, []string{
+		newRows = append(newRows, []string{
 			IntToStr(s.ID),
 			s.ProductName,
 			IntToStr(s.Quantity),
@@ -36,9 +39,10 @@ func makeDashboard() fyne.CanvasObject {
 			s.Date,
 		})
 	}
-	if len(rows) == 0 {
-		rows = [][]string{{"—", "No recent sales", "—", "—", "—"}}
+	if len(newRows) == 0 {
+		newRows = [][]string{{"—", "No recent sales", "—", "—", "—"}}
 	}
+	rows = newRows
 
 	tbl := MakeTable(headers, &rows)
 	tbl.SetColumnWidth(0, 50)
