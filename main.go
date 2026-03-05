@@ -66,6 +66,7 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s", port)
+	log.Printf("Server running at: http://localhost:%s", port)
 	router.Run(":" + port)
 }
 
