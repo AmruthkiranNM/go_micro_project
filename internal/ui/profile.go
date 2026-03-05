@@ -71,18 +71,23 @@ func makeProfile(state *AppState) fyne.CanvasObject {
 		widget.NewFormItem("New Password", passwordEntry),
 	)
 
+	scrollContent := container.NewScroll(
+		container.NewPadded(
+			container.NewVBox(
+				form,
+				widget.NewLabel(""), // Spacer
+				saveBtn,
+				statusLabel,
+			),
+		),
+	)
+
 	return container.NewBorder(
 		container.NewVBox(
 			MakeSectionTitle("👤 Admin Profile Settings"),
 			widget.NewSeparator(),
 		),
 		nil, nil, nil,
-		container.NewCenter(
-			container.NewVBox(
-				form,
-				saveBtn,
-				statusLabel,
-			),
-		),
+		scrollContent,
 	)
 }
