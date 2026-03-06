@@ -87,7 +87,7 @@ func makeReports() fyne.CanvasObject {
 		nil, nil, nil,
 		container.NewVSplit(
 			scrollSumTbl,
-			container.NewVBox(MakeSectionTitle("Recent Sales History (Last 10)"), scrollHistTbl),
+			container.NewBorder(MakeSectionTitle("Recent Sales History (Last 10)"), nil, nil, nil, scrollHistTbl),
 		),
 	)
 }

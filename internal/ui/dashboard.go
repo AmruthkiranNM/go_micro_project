@@ -62,10 +62,11 @@ func makeDashboard() fyne.CanvasObject {
 	return container.NewBorder(
 		container.NewVBox(title, widget.NewSeparator(), cardsRow, widget.NewSeparator()),
 		nil, nil, nil,
-		container.NewVBox(
+		container.NewBorder(
 			recentTitle,
-			scrollTbl,
 			refreshBtn,
+			nil, nil,
+			scrollTbl,
 		),
 	)
 }
